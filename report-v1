@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Architect Program - Survey Insights</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --electric-lime: #ccff00;
+            --deep-navy: #0a0e27;
+            --bright-cyan: #00ffff;
+            --neon-pink: #ff006e;
+            --off-white: #f8f8f0;
+            --steel-gray: #2d3748;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(204, 255, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(204, 255, 0, 0.6);
+            }
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--deep-navy);
+            color: var(--off-white);
+            line-height: 1.6;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(135deg, transparent 0%, rgba(204, 255, 0, 0.03) 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(204, 255, 0, 0.03) 2px,
+                    rgba(204, 255, 0, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+        
+        .header {
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .header-accent {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            color: var(--electric-lime);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 92px;
+            line-height: 0.9;
+            color: var(--off-white);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .header h1 span {
+            color: var(--electric-lime);
+            display: block;
+        }
+        
+        .header-meta {
+            font-size: 13px;
+            color: var(--bright-cyan);
+            font-weight: 400;
+        }
+        
+        .metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            margin-bottom: 80px;
+            background: var(--electric-lime);
+            padding: 2px;
+            animation: slideInLeft 0.8s ease-out 0.2s both;
+        }
+        
+        .metric-card {
+            background: var(--deep-navy);
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--electric-lime);
+        }
+        
+        .metric-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            line-height: 1;
+            color: var(--electric-lime);
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: var(--off-white);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
+        }
+        
+        .metric-card:hover {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(204, 255, 0, 0.2);
+            padding: 40px;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .chart-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--electric-lime) 0%, transparent 100%);
+            opacity: 0.1;
+            clip-path: polygon(100% 0, 0 0, 100% 100%);
+        }
+        
+        .chart-container h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: var(--electric-lime);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .insights-panel {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(204, 255, 0, 0.2);
+            padding: 50px;
+            position: relative;
+            animation: slideInRight 0.8s ease-out 0.6s both;
+        }
+        
+        .insights-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--electric-lime) 0%, var(--bright-cyan) 100%);
+        }
+        
+        .insights-panel h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: var(--electric-lime);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+        
+        .insight-category h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--bright-cyan);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .insight-category h4::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--electric-lime);
+            font-weight: bold;
+        }
+        
+        .insight-category ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .insight-category li {
+            padding: 12px 0 12px 20px;
+            color: var(--off-white);
+            font-size: 13px;
+            line-height: 1.7;
+            border-left: 2px solid rgba(204, 255, 0, 0.3);
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .insight-category li strong {
+            color: var(--electric-lime);
+            font-weight: 600;
+        }
+        
+        .alert-box {
+            background: rgba(255, 0, 110, 0.1);
+            border: 2px solid var(--neon-pink);
+            padding: 30px;
+            margin-top: 40px;
+            position: relative;
+        }
+        
+        .alert-box::before {
+            content: '⚠';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            background: var(--deep-navy);
+            color: var(--neon-pink);
+            font-size: 32px;
+            padding: 0 10px;
+        }
+        
+        .alert-box h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--neon-pink);
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .alert-box p {
+            color: var(--off-white);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        
+        .recommendations {
+            grid-column: 1 / -1;
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 50px;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+        
+        .recommendations h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: var(--bright-cyan);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .rec-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: rec-counter;
+        }
+        
+        .rec-list li {
+            padding: 25px 0 25px 80px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+            counter-increment: rec-counter;
+        }
+        
+        .rec-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .rec-list li::before {
+            content: counter(rec-counter);
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--bright-cyan);
+            opacity: 0.3;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .rec-list li strong {
+            color: var(--bright-cyan);
+            font-weight: 600;
+        }
+        
+        canvas {
+            max-height: 280px;
+        }
+        
+        @media print {
+            body::before {
+                display: none;
+            }
+            .container {
+                padding: 20px;
+            }
+            * {
+                animation: none !important;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .header h1 {
+                font-size: 64px;
+            }
+            .metrics-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .content-grid, .insight-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-accent">Survey Analysis / Sessions 01-02</div>
+            <h1>AI Architect<span>Program Insights</span></h1>
+            <div class="header-meta">Never Search Alone Community → January 23 & 30, 2026</div>
+        </div>
+        
+        <div class="metrics-strip">
+            <div class="metric-card">
+                <div class="metric-value">20</div>
+                <div class="metric-label">Total Responses</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">95%</div>
+                <div class="metric-label">Satisfaction Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">13</div>
+                <div class="metric-label">Top Ratings</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">65%</div>
+                <div class="metric-label">Response Rate</div>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="chart-container">
+                <h3>Rating Distribution</h3>
+                <canvas id="ratingsChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Session Comparison</h3>
+                <canvas id="sessionChart"></canvas>
+            </div>
+            
+            <div class="insights-panel">
+                <h3>Key Insights & Themes</h3>
+                
+                <div class="insight-grid">
+                    <div class="insight-category">
+                        <h4>What's Working Well</h4>
+                        <ul>
+                            <li><strong>Real-world examples:</strong> Participants highly value seeing practical demonstrations and workflows in action, including when things fail</li>
+                            <li><strong>Interactive learning:</strong> Ability to ask questions in real-time and learn from practitioners is a major strength</li>
+                            <li><strong>Approachable explanations:</strong> Analogies and anthropomorphization help make complex AI concepts accessible</li>
+                            <li><strong>Step-by-step processes:</strong> Watching builds from start to finish (e.g., Lovable demo) is particularly effective</li>
+                            <li><strong>Diverse perspectives:</strong> Hearing both technical and non-technical viewpoints enriches the learning experience</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="insight-category">
+                        <h4>Opportunities for Improvement</h4>
+                        <ul>
+                            <li><strong>Technical accessibility:</strong> Some participants find content too jargon-heavy, particularly those from non-technical backgrounds</li>
+                            <li><strong>Pacing concerns:</strong> Notable learning curve jump between sessions; some feel they need to catch up</li>
+                            <li><strong>Slide complexity:</strong> Feedback suggests reducing words per slide and spending less time on dense content</li>
+                            <li><strong>Interaction clarity:</strong> Participants uncertain about when to use chat vs. raising hand for questions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert-box">
+                    <h4>Critical Feedback (1 Response)</h4>
+                    <p><strong>Actionable recommendations:</strong> (1) Have non-technical reviewers preview materials, (2) Reduce jargon and provide definitions, (3) Simplify flowcharts, (4) Less text-heavy slides</p>
+                </div>
+            </div>
+            
+            <div class="recommendations">
+                <h3>Recommendations for Final Session (Feb 13)</h3>
+                <ul class="rec-list">
+                    <li><strong>Maintain the showcase format</strong> – Real examples and demonstrations are consistently rated as most valuable</li>
+                    <li><strong>Balance technical depth</strong> – Consider parallel tracks or "101 vs. 201" framing for mixed audiences</li>
+                    <li><strong>Clarify participation norms</strong> – Set clear expectations at the start for Q&A format</li>
+                    <li><strong>Encourage peer learning</strong> – Create space for participants to share their own builds and insights</li>
+                    <li><strong>Celebrate progress</strong> – Acknowledge the learning journey and varying entry points of participants</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Custom Chart.js styling for dark theme
+        Chart.defaults.color = '#f8f8f0';
+        Chart.defaults.borderColor = 'rgba(204, 255, 0, 0.2)';
+        Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+        
+        // Rating Distribution Chart
+        const ratingsCtx = document.getElementById('ratingsChart').getContext('2d');
+        new Chart(ratingsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['5 - Very Helpful', '4 - Helpful', '1 - Not Helpful'],
+                datasets: [{
+                    data: [13, 6, 1],
+                    backgroundColor: [
+                        '#ccff00',
+                        '#00ffff',
+                        '#ff006e'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                family: "'IBM Plex Mono', monospace"
+                            },
+                            color: '#f8f8f0'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0a0e27',
+                        borderColor: '#ccff00',
+                        borderWidth: 1,
+                        titleFont: {
+                            family: "'IBM Plex Mono', monospace"
+                        },
+                        bodyFont: {
+                            family: "'IBM Plex Mono', monospace"
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Session Comparison Chart
+        const sessionCtx = document.getElementById('sessionChart').getContext('2d');
+        new Chart(sessionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Session 1\n(Jan 23)', 'Session 2\n(Jan 30)'],
+                datasets: [{
+                    label: 'Responses',
+                    data: [9, 11],
+                    backgroundColor: '#ccff00',
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    barThickness: 80
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 2,
+                            color: '#f8f8f0',
+                            font: {
+                                family: "'IBM Plex Mono', monospace",
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(204, 255, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#f8f8f0',
+                            font: {
+                                family: "'IBM Plex Mono', monospace",
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#0a0e27',
+                        borderColor: '#ccff00',
+                        borderWidth: 1,
+                        titleFont: {
+                            family: "'IBM Plex Mono', monospace"
+                        },
+                        bodyFont: {
+                            family: "'IBM Plex Mono', monospace"
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

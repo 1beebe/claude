@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building an Agent: Survey Insights Workflow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #fffef9;
+            --ink: #1a1a1a;
+            --accent-gold: #d4af37;
+            --accent-burgundy: #8b2635;
+            --soft-gray: #6b6b6b;
+            --light-gray: #e8e8e8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.8;
+            padding: 0;
+            font-weight: 300;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(212, 175, 55, 0.02) 2px,
+                    rgba(212, 175, 55, 0.02) 4px
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 60px;
+            background: var(--paper);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.08);
+        }
+        
+        .ornament {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .ornament::before,
+        .ornament::after {
+            content: '◆';
+            color: var(--accent-gold);
+            font-size: 12px;
+            margin: 0 15px;
+            opacity: 0.6;
+        }
+        
+        .ornament span {
+            font-family: 'Lato', sans-serif;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--soft-gray);
+            font-weight: 400;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--light-gray);
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            line-height: 1.2;
+            color: var(--ink);
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+        
+        .header .subtitle {
+            font-size: 18px;
+            color: var(--accent-burgundy);
+            font-style: italic;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .intro {
+            font-size: 16px;
+            line-height: 1.9;
+            margin-bottom: 60px;
+            padding: 30px;
+            background: linear-gradient(to right, rgba(212, 175, 55, 0.05), transparent);
+            border-left: 3px solid var(--accent-gold);
+            animation: fadeIn 1.4s ease-out;
+        }
+        
+        .intro p {
+            margin-bottom: 15px;
+        }
+        
+        .intro p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section {
+            margin-bottom: 70px;
+            animation: fadeIn 1.6s ease-out;
+        }
+        
+        .section-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            color: rgba(212, 175, 55, 0.15);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: -20px;
+        }
+        
+        .section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--accent-burgundy);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--ink);
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .section p {
+            font-size: 15px;
+            line-height: 1.9;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        
+        .component-box {
+            background: rgba(139, 38, 53, 0.03);
+            border: 1px solid rgba(139, 38, 53, 0.15);
+            padding: 25px 30px;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .component-box::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 30px;
+            right: 30px;
+            height: 1px;
+            background: var(--accent-burgundy);
+        }
+        
+        .component-box h4 {
+            font-family: 'Lato', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-burgundy);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .component-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .component-list li {
+            padding: 12px 0;
+            border-bottom: 1px dotted var(--light-gray);
+            display: flex;
+            align-items: baseline;
+        }
+        
+        .component-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .component-list li::before {
+            content: '→';
+            color: var(--accent-gold);
+            margin-right: 15px;
+            font-weight: 700;
+        }
+        
+        .component-list strong {
+            color: var(--accent-burgundy);
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .workflow-diagram {
+            background: linear-gradient(to bottom, var(--paper), rgba(212, 175, 55, 0.03));
+            border: 2px solid var(--accent-gold);
+            padding: 40px;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .workflow-diagram::before {
+            content: 'WORKFLOW';
+            position: absolute;
+            top: -12px;
+            left: 40px;
+            background: var(--paper);
+            padding: 0 15px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+        
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .workflow-step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            color: var(--accent-gold);
+            font-weight: 900;
+            line-height: 1;
+            min-width: 60px;
+            opacity: 0.4;
+        }
+        
+        .step-content h4 {
+            font-family: 'Lato', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent-burgundy);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .step-content p {
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 0;
+            color: var(--soft-gray);
+        }
+        
+        .callout {
+            background: linear-gradient(135deg, rgba(139, 38, 53, 0.08), rgba(139, 38, 53, 0.03));
+            border-left: 4px solid var(--accent-burgundy);
+            padding: 30px 35px;
+            margin: 40px 0;
+            font-style: italic;
+        }
+        
+        .callout p {
+            font-size: 15px;
+            line-height: 1.9;
+            color: var(--accent-burgundy);
+            margin: 0;
+        }
+        
+        .callout strong {
+            font-weight: 700;
+            font-style: normal;
+        }
+        
+        .conclusion {
+            text-align: center;
+            padding-top: 60px;
+            margin-top: 60px;
+            border-top: 1px solid var(--light-gray);
+            animation: fadeIn 1.8s ease-out;
+        }
+        
+        .conclusion::before {
+            content: '✦';
+            display: block;
+            font-size: 20px;
+            color: var(--accent-gold);
+            margin-bottom: 30px;
+            opacity: 0.6;
+        }
+        
+        .conclusion p {
+            font-size: 16px;
+            line-height: 1.9;
+            color: var(--soft-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 50px 30px;
+            }
+            
+            .header h1 {
+                font-size: 38px;
+            }
+            
+            .section-number {
+                font-size: 52px;
+            }
+            
+            .workflow-step {
+                flex-direction: column;
+            }
+            
+            .step-number {
+                margin-bottom: 10px;
+            }
+        }
+        
+        @media print {
+            body::before {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+            }
+            * {
+                animation: none !important;
+            }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ornament">
+            <span>Technical Architecture Guide</span>
+        </div>
+        
+        <div class="header">
+            <h1>Building an Agent from<br>Your Survey Workflow</h1>
+            <p class="subtitle">Transforming Manual Processes into Automated Intelligence</p>
+        </div>
+        
+        <div class="intro">
+            <p>The workflow you just witnessed—parsing survey data, calculating metrics, generating visualizations, and designing a report—is an excellent candidate for agent automation. Here's how to architect this as a repeatable, intelligent system.</p>
+        </div>
+        
+        <div class="section">
+            <div class="section-number">01</div>
+            <h2>Understanding the Current Workflow</h2>
+            
+            <p>Before building an agent, let's decompose what happened:</p>
+            
+            <div class="workflow-diagram">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Data Ingestion</h4>
+                        <p>Survey responses were provided in a tab-separated text document uploaded to the conversation</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Analysis & Computation</h4>
+                        <p>Python script parsed the data, calculated satisfaction rates, counted ratings, and grouped by session date</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Insight Extraction</h4>
+                        <p>Qualitative feedback was analyzed to identify themes (what's working, what needs improvement)</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Visualization Generation</h4>
+                        <p>Chart.js was used to create interactive doughnut and bar charts embedded in HTML</p>
+                    </div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Report Design & Assembly</h4>
+                        <p>Frontend-design skill informed aesthetic choices, resulting in a distinctive HTML report</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-number">02</div>
+            <h2>Core Agent Components</h2>
+            
+            <p>To transform this into an autonomous agent, you need these architectural elements:</p>
+            
+            <div class="component-box">
+                <h4>Input Interface</h4>
+                <ul class="component-list">
+                    <li><strong>Trigger:</strong> Email with survey CSV attachment, or automated export from survey platform (Zoom, Google Forms, Typeform)</li>
+                    <li><strong>Parser:</strong> Standardized data schema that handles various survey formats (tab-separated, CSV, JSON)</li>
+                    <li><strong>Validation:</strong> Check for required fields (timestamp, rating, feedback text) before processing</li>
+                </ul>
+            </div>
+            
+            <div class="component-box">
+                <h4>Analysis Engine</h4>
+                <ul class="component-list">
+                    <li><strong>Quantitative Module:</strong> Calculate satisfaction rates, response counts, rating distributions, session comparisons</li>
+                    <li><strong>Qualitative Module:</strong> Use LLM to extract themes from open-ended feedback, categorize comments, identify sentiment</li>
+                    <li><strong>Trend Detection:</strong> Compare current session to historical data to identify improvement or decline patterns</li>
+                </ul>
+            </div>
+            
+            <div class="component-box">
+                <h4>Knowledge Base (Skills)</h4>
+                <ul class="component-list">
+                    <li><strong>Domain Knowledge:</strong> What makes effective educational workshops (engagement patterns, pacing concerns)</li>
+                    <li><strong>Design Standards:</strong> Frontend-design skill for visual report generation</li>
+                    <li><strong>Reporting Templates:</strong> Pre-defined structures for different stakeholders (facilitator vs. leadership)</li>
+                </ul>
+            </div>
+            
+            <div class="component-box">
+                <h4>Output Generator</h4>
+                <ul class="component-list">
+                    <li><strong>Visualization Builder:</strong> Automatically generate appropriate chart types based on data structure</li>
+                    <li><strong>Report Renderer:</strong> Apply design system and brand guidelines to HTML output</li>
+                    <li><strong>Recommendation Engine:</strong> Generate actionable next steps based on identified patterns</li>
+                </ul>
+            </div>
+            
+            <div class="component-box">
+                <h4>Distribution System</h4>
+                <ul class="component-list">
+                    <li><strong>Delivery:</strong> Email report to facilitator, post to Slack channel, or upload to Google Drive</li>
+                    <li><strong>Archiving:</strong> Store reports chronologically for longitudinal analysis</li>
+                    <li><strong>Notifications:</strong> Alert when critical feedback appears (low ratings, urgent concerns)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-number">03</div>
+            <h2>Agent Architecture Options</h2>
+            
+            <h3>Option A: No-Code Agent (MindStudio)</h3>
+            <p>Since you're a MindStudio Level 3 Certified AI Agent Developer, this is your natural path:</p>
+            
+            <p><strong>Setup:</strong> Create a MindStudio workflow with blocks for data parsing, analysis, and HTML generation. Connect to Google Drive or Dropbox for automatic file monitoring. When new survey exports appear, trigger the agent.</p>
+            
+            <p><strong>Pros:</strong> Visual workflow builder, no coding required for iterations, easy to share with non-technical team members, built-in scheduling</p>
+            
+            <p><strong>Cons:</strong> Limited control over complex data transformations, may need custom code blocks for specialized visualizations</p>
+            
+            <h3>Option B: API-Driven Agent (Anthropic Claude API)</h3>
+            <p>Build a Python script that orchestrates the entire workflow programmatically:</p>
+            
+            <p><strong>Setup:</strong> Create a scheduled job (cron or cloud function) that checks for new survey data, passes it to Claude API with structured prompts for analysis, uses the API's response to populate HTML templates, then distributes via email API.</p>
+            
+            <p><strong>Pros:</strong> Full control over data processing, can integrate with any existing systems, sophisticated error handling, version control for prompts</p>
+            
+            <p><strong>Cons:</strong> Requires programming knowledge, more maintenance overhead, API costs scale with usage</p>
+            
+            <h3>Option C: Hybrid Approach (Best of Both)</h3>
+            <p>Use MindStudio for orchestration and user interface, but call out to custom Python functions for complex calculations:</p>
+            
+            <p><strong>Setup:</strong> MindStudio workflow handles data ingestion and delivery, custom API endpoints handle statistical analysis and chart generation, Claude API (via MindStudio) performs qualitative analysis and report writing.</p>
+            
+            <p><strong>Pros:</strong> Combines ease-of-use with technical power, separates concerns clearly, easier to update individual components</p>
+            
+            <p><strong>Cons:</strong> More moving parts to maintain, requires understanding both platforms</p>
+        </div>
+        
+        <div class="callout">
+            <p><strong>Critical Design Decision:</strong> Should the agent generate a single standardized report, or should it dynamically adapt based on the data? For your use case, I recommend a <em>template-with-intelligence</em> approach—maintain consistent structure for easy scanning, but let the agent emphasize different insights based on what's most actionable in each dataset.</p>
+        </div>
+        
+        <div class="section">
+            <div class="section-number">04</div>
+            <h2>Implementation Roadmap</h2>
+            
+            <h3>Phase 1: Manual Automation (Week 1)</h3>
+            <p>Create a reusable prompt template in Claude that you can paste survey data into. This gets you 80% of the value with minimal setup. Document the exact steps so you can delegate to an assistant.</p>
+            
+            <h3>Phase 2: Semi-Automated Pipeline (Weeks 2-3)</h3>
+            <p>Build a MindStudio workflow that accepts file uploads and generates reports on demand. Test with multiple survey formats to ensure robustness. Share with a colleague for feedback.</p>
+            
+            <h3>Phase 3: Fully Automated Agent (Week 4+)</h3>
+            <p>Connect to your survey platform's API or set up automated exports. Add scheduling so reports generate automatically after each session. Implement notification system for urgent feedback.</p>
+            
+            <h3>Phase 4: Continuous Improvement (Ongoing)</h3>
+            <p>Collect feedback on the agent's reports. Refine prompts to better surface actionable insights. Add historical comparison features. Experiment with different visualization styles.</p>
+        </div>
+        
+        <div class="section">
+            <div class="section-number">05</div>
+            <h2>Key Technical Considerations</h2>
+            
+            <h3>Data Privacy & Security</h3>
+            <p>Survey responses may contain sensitive participant feedback. Ensure your agent doesn't store personally identifiable information longer than necessary. Consider anonymization strategies if sharing reports broadly.</p>
+            
+            <h3>Prompt Engineering for Consistency</h3>
+            <p>The quality of agent-generated insights depends heavily on prompt design. Include few-shot examples in your prompts showing the type of thematic analysis you want. Explicitly instruct the agent to flag contradictory feedback or unusual patterns.</p>
+            
+            <h3>Error Handling & Fallbacks</h3>
+            <p>What happens if survey data is malformed? If the LLM fails to extract themes? Build graceful degradation—even a partial report with just quantitative metrics is better than nothing.</p>
+            
+            <h3>Cost Management</h3>
+            <p>If using API-based solutions, estimate costs based on expected token usage. For your 20-response surveys with qualitative feedback, you're looking at roughly 5,000-10,000 tokens per report (under $0.20 with Claude Sonnet). Very manageable for a 6-week program.</p>
+        </div>
+        
+        <div class="callout">
+            <p><strong>For Your Feb 13 Showcase:</strong> Consider demonstrating this agent architecture to your participants. Walk through how you'd take a manual task they perform regularly and transform it into an automated workflow. This bridges the gap between "using AI" and "building with AI."</p>
+        </div>
+        
+        <div class="conclusion">
+            <p>The workflow you experienced today—from raw survey data to polished insights report—demonstrates the core value proposition of agent systems: <strong>transforming repetitive cognitive labor into automated intelligence</strong>. By architecting this as an agent, you free yourself to focus on facilitation and program design rather than data wrangling and report formatting.</p>
+        </div>
+    </div>
+</body>
+</html>

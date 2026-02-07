@@ -1,6 +1,6 @@
 # AI Architect Program: Brain + Hands Demo
 
-Demo from February 6, 2026 workshop illustrating how AI agents work: the LLM (brain) orchestrates tools and skills (hands) to accomplish tasks.
+Demo from February 6, 2026 workshop illustrating AI agentic workflows work: the LLM (brain) orchestrates tools and skills (hands) to accomplish tasks.
 
 > **Note for Workshop Attendees:** If you were at the live session, you'll notice these assets look different from what we generated together. This highlights the non-deterministic nature of LLMs - the same or similar prompts will produce vastly different results, even with identical data. This variability is a feature, not a bug, and understanding how to guide it is key to effective AI architecture.
 

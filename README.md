@@ -19,7 +19,7 @@ Demo from February 6, 2026 workshop illustrating how AI agents work: the LLM (br
 
 **What happened:** Brain used tools (Python for analysis, HTML for output) but no design skill → generic result
 
-[View Output](report-v1.html) | [Preview](https://1beebe.github.io/claude/report-v1.html)
+[View Output](report-V1.html) | [Preview](https://1beebe.github.io/claude/report-V1.html)
 
 ---
 
@@ -29,7 +29,7 @@ Demo from February 6, 2026 workshop illustrating how AI agents work: the LLM (br
 
 **What happened:** Brain read skill file first, then used same tools → distinctive, intentional design
 
-[View Output](report-v2.html) | [Preview](https://yourusername.github.io/claude/survey-insights-redesign.html)
+[View Output](report-V2.html) | [Preview](https://yourusername.github.io/claude/report-V2.html)
 
 ---
 

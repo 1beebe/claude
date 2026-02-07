@@ -47,6 +47,6 @@ Demo from February 6, 2026 workshop illustrating AI agentic workflows work: the 
 ---
 
 ## Key Takeaway
-The brain (LLM) stays the same. The hands (tools) stay the same. But adding **skills** (knowledge bases) transforms output quality. And understanding this architecture lets you build agents that work autonomously - that's the next level.
+The brain (LLM) stays the same. The hands (tools) stay the same. But adding **skills** (knowledge bases) transforms output quality. The workflow is agentic. But not quite an autonomous agent. 
 
 *AI Architect Program| February 2026*

@@ -32,7 +32,7 @@ Demo from February 6, 2026 workshop illustrating AI agentic workflows work: the 
 
 **What happened:** Brain read skill file first, then used same tools → distinctive, intentional design
 
-[View Output](report-V2.html) | [Preview](https://yourusername.github.io/claude/report-V2.html)
+[View Output](report-V2.html) | [Preview](https://1beebe.github.io/claude/report-V2.html)
 
 ---
 
@@ -42,7 +42,7 @@ Demo from February 6, 2026 workshop illustrating AI agentic workflows work: the 
 
 **What happened:** Brain applied architectural thinking - showing how to transform this manual workflow into an automated agent system. Demonstrates moving from "using AI" to "building with AI."
 
-[View Output](agent-workflow-guide.html) | [Preview](https://yourusername.github.io/claude/agent-workflow-guide.html)
+[View Output](agent-workflow-guide.html) | [Preview](https://1beebe.github.io/claude/agent-workflow-guide.html)
 
 ---
 

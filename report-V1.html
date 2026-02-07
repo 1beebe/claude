@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Architect Program - Survey Insights Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 30px 40px;
+            background: #f8f9fa;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px 40px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .insights-section {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .insights-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .insight-category {
+            margin-bottom: 20px;
+        }
+        
+        .insight-category h4 {
+            font-size: 15px;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .insight-category h4::before {
+            content: "✓";
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        .insight-category ul {
+            list-style: none;
+            padding-left: 34px;
+        }
+        
+        .insight-category li {
+            padding: 6px 0;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .insight-category li::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .alert-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+        
+        .alert-box h4 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .alert-box p {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        canvas {
+            max-height: 250px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Architect Program - Survey Insights</h1>
+            <p>Sessions 1 & 2 (January 23 & 30, 2026) | Never Search Alone Community</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">20</div>
+                <div class="metric-label">Total Responses</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">95%</div>
+                <div class="metric-label">Satisfaction Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">13</div>
+                <div class="metric-label">"Very Helpful" Ratings</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">65%</div>
+                <div class="metric-label">Response Rate</div>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="chart-container">
+                <h3>Rating Distribution</h3>
+                <canvas id="ratingsChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h3>Session Comparison</h3>
+                <canvas id="sessionChart"></canvas>
+            </div>
+            
+            <div class="insights-section">
+                <h3>Key Insights & Themes</h3>
+                
+                <div class="insight-category">
+                    <h4>What's Working Well</h4>
+                    <ul>
+                        <li><strong>Real-world examples:</strong> Participants highly value seeing practical demonstrations and workflows in action, including when things fail</li>
+                        <li><strong>Interactive learning:</strong> Ability to ask questions in real-time and learn from practitioners is a major strength</li>
+                        <li><strong>Approachable explanations:</strong> Analogies and anthropomorphization help make complex AI concepts accessible</li>
+                        <li><strong>Step-by-step processes:</strong> Watching builds from start to finish (e.g., Lovable demo) is particularly effective</li>
+                        <li><strong>Diverse perspectives:</strong> Hearing both technical and non-technical viewpoints enriches the learning experience</li>
+                    </ul>
+                </div>
+                
+                <div class="insight-category">
+                    <h4>Opportunities for Improvement</h4>
+                    <ul>
+                        <li><strong>Technical accessibility:</strong> Some participants find content too jargon-heavy, particularly those from non-technical backgrounds</li>
+                        <li><strong>Pacing concerns:</strong> Notable learning curve jump between sessions; some feel they need to catch up</li>
+                        <li><strong>Slide complexity:</strong> Feedback suggests reducing words per slide and spending less time on dense content</li>
+                        <li><strong>Interaction clarity:</strong> Participants uncertain about when to use chat vs. raising hand for questions</li>
+                    </ul>
+                </div>
+                
+                <div class="alert-box">
+                    <h4>⚠️ Critical Feedback (1 Response)</h4>
+                    <p><strong>Actionable recommendations:</strong> (1) Have non-technical reviewers preview materials, (2) Reduce jargon and provide definitions, (3) Simplify flowcharts, (4) Less text-heavy slides</p>
+                </div>
+            </div>
+            
+            <div class="insights-section">
+                <h3>Recommendations for Final Session (Feb 13)</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>1. Maintain the showcase format</strong> – Real examples and demonstrations are consistently rated as most valuable
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>2. Balance technical depth</strong> – Consider parallel tracks or "101 vs. 201" framing for mixed audiences
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>3. Clarify participation norms</strong> – Set clear expectations at the start for Q&A format
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>4. Encourage peer learning</strong> – Create space for participants to share their own builds and insights
+                    </li>
+                    <li style="padding: 10px 0;">
+                        <strong>5. Celebrate progress</strong> – Acknowledge the learning journey and varying entry points of participants
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Rating Distribution Chart
+        const ratingsCtx = document.getElementById('ratingsChart').getContext('2d');
+        new Chart(ratingsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['5 - Very Helpful', '4 - Helpful', '1 - Not Helpful'],
+                datasets: [{
+                    data: [13, 6, 1],
+                    backgroundColor: [
+                        '#667eea',
+                        '#a8b3f5',
+                        '#ffc107'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Session Comparison Chart
+        const sessionCtx = document.getElementById('sessionChart').getContext('2d');
+        new Chart(sessionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Session 1 (Jan 23)', 'Session 2 (Jan 30)'],
+                datasets: [{
+                    label: 'Responses',
+                    data: [9, 11],
+                    backgroundColor: '#667eea',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 2
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
